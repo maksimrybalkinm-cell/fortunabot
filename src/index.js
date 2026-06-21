@@ -39,7 +39,17 @@ async function handleUpdate(update, env, origin) {
       env,
       chatId,
       `${origin}/welcome.jpg`,
-      "Приветствуем!"
+      "Привет!\n\nПодпишись на канал:",
+      {
+        inline_keyboard: [
+          [
+            {
+              text: "Нажми Start",
+              url: "https://t.me/Starsitofiplaybot?start=_tgr_dXVVZLI4ODAy",
+            },
+          ],
+        ],
+      }
     );
     return;
   }
@@ -78,11 +88,12 @@ async function sendMessage(env, chatId, text) {
   }
 }
 
-async function sendPhoto(env, chatId, photoUrl, caption) {
+async function sendPhoto(env, chatId, photoUrl, caption, replyMarkup) {
   const response = await telegramFetch(env, "sendPhoto", {
     chat_id: chatId,
     photo: photoUrl,
     caption,
+    reply_markup: replyMarkup,
   });
 
   if (!response.ok) {
