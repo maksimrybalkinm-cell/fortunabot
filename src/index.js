@@ -125,7 +125,7 @@ async function handleCallbackQuery(callbackQuery, env) {
   }
 
   if (data === "check_start") {
-    await sendMessage(env, message.chat.id, "Ваша ссылка:\nhttps://t.me/+cggLwnur0kkyZjQy");
+    await sendMessage(env, message.chat.id, "Ваша ссылка:\nhttps://t.me/+qzo8qBHfuSkzMDA6");
   }
 }
 
