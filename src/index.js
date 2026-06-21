@@ -50,7 +50,31 @@ async function handleUpdate(update, env, origin) {
           [
             {
               text: "Нажми Start",
-              url: "https://t.me/Starsitofiplaybot?start=_tgr_dXVVZLI4ODAy",
+              url: "https://t.me/pikme_aibot?start=_tgr_ilDxnWJiOGQy",
+            },
+          ],
+          [
+            {
+              text: "Нажми Start",
+              url: "https://t.me/luciddreams?start=_tgr_G-ZOMoNkMDAy",
+            },
+          ],
+          [
+            {
+              text: "Нажми Start",
+              url: "https://t.me/EasyGiftDropbot?start=_tgr__r9-pOtkNDQy",
+            },
+          ],
+          [
+            {
+              text: "Нажми Start",
+              url: "https://t.me/T6HDstarbot?start=_tgr_wlDtKUEyZjYy",
+            },
+          ],
+          [
+            {
+              text: "Нажми Start",
+              url: "https://t.me/GiftsBattle_bot?start=_tgr_uaj_OY0xMGE6",
             },
           ],
           [
