@@ -44,7 +44,7 @@ async function handleUpdate(update, env, origin) {
       env,
       chatId,
       `${origin}/welcome.jpg`,
-      "Привет!\nПодпишись на канал:",
+      "Привет!\nВыполни эти задания",
       {
         inline_keyboard: [
           [
