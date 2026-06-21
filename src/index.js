@@ -17,6 +17,11 @@ export default {
       }
 
       const update = await request.json();
+      if (update.callback_query) {
+        await handleCallbackQuery(update.callback_query, env);
+        return jsonResponse({ ok: true });
+      }
+
       await handleUpdate(update, env, url.origin);
       return jsonResponse({ ok: true });
     }
@@ -39,13 +44,19 @@ async function handleUpdate(update, env, origin) {
       env,
       chatId,
       `${origin}/welcome.jpg`,
-      "Привет!\n\nПодпишись на канал:",
+      "Привет!\nПодпишись на канал:",
       {
         inline_keyboard: [
           [
             {
               text: "Нажми Start",
               url: "https://t.me/Starsitofiplaybot?start=_tgr_dXVVZLI4ODAy",
+            },
+          ],
+          [
+            {
+              text: "Проверить",
+              callback_data: "check_start",
             },
           ],
         ],
@@ -74,6 +85,24 @@ async function handleUpdate(update, env, origin) {
   }
 
   await sendMessage(env, chatId, "Ya poka umeyu otvechat tolko na tekst.");
+}
+
+async function handleCallbackQuery(callbackQuery, env) {
+  const message = callbackQuery.message;
+  const callbackId = callbackQuery.id;
+  const data = callbackQuery.data || "";
+
+  if (callbackId) {
+    await answerCallbackQuery(env, callbackId);
+  }
+
+  if (!message || !message.chat || typeof message.chat.id === "undefined") {
+    return;
+  }
+
+  if (data === "check_start") {
+    await sendMessage(env, message.chat.id, "Ваша ссылка: https://t.me/+cggLwnur0kkyZjQy");
+  }
 }
 
 async function sendMessage(env, chatId, text) {
@@ -110,6 +139,17 @@ function telegramFetch(env, method, payload) {
     },
     body: JSON.stringify(payload),
   });
+}
+
+async function answerCallbackQuery(env, callbackQueryId) {
+  const response = await telegramFetch(env, "answerCallbackQuery", {
+    callback_query_id: callbackQueryId,
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Telegram API error: ${response.status} ${details}`);
+  }
 }
 
 function jsonResponse(data, status = 200) {
