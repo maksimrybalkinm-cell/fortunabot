@@ -2,5 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "fortunabot-worker",
   "main": "src/index.js",
-  "compatibility_date": "2026-06-21"
+  "compatibility_date": "2026-06-21",
+  "assets": {
+    "directory": "public"
+  }
 }

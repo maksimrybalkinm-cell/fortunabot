@@ -1,58 +1,54 @@
-# Telegram bot on your PC
+# Telegram bot on Cloudflare Workers
 
-Этот бот работает с твоего компьютера через long polling. Покупать хост не нужно, но бот будет онлайн только пока включен ПК и запущен скрипт.
+Этот вариант не требует платного хоста и не держит включенным твой ПК. Бот принимает обновления через Telegram webhook.
 
-## 1. Создай бота
+## Что уже готово
 
-1. Открой Telegram.
-2. Найди `@BotFather`.
-3. Напиши `/newbot`.
-4. Задай имя и username.
-5. Скопируй токен.
+- `src/index.js` - код Cloudflare Worker
+- `public/welcome.jpg` - картинка для команды `/start`
+- `wrangler.jsonc` - конфиг Worker
 
-Токен никому не отправляй и не выкладывай публично.
+## Как запустить через Cloudflare Dashboard
 
-## 2. Добавь токен
-
-Скопируй файл `config.env.example` в `config.env`.
-
-Внутри `config.env` замени значение на свой токен:
-
-```env
-TELEGRAM_BOT_TOKEN=твой_токен_от_BotFather
-```
-
-## 3. Запусти
-
-Открой PowerShell в этой папке и выполни:
-
-```powershell
-python .\bot.py
-```
-
-Если команда `python` не найдена, попробуй:
-
-```powershell
-py .\bot.py
-```
-
-Если и это не работает, установи Python 3 с официального сайта Python и при установке включи галочку `Add python.exe to PATH`.
-
-## 4. Проверь
-
-Открой своего бота в Telegram и отправь:
+1. Зайди в [Cloudflare Workers](https://dash.cloudflare.com/).
+2. Открой `Workers & Pages`.
+3. Нажми `Create application` или `Create Worker`.
+4. Назови Worker, например `fortunabot-worker`.
+5. Открой редактор кода и замени содержимое на код из `src/index.js`.
+6. В `Settings` -> `Variables and Secrets` добавь secret:
 
 ```text
-/start
+TELEGRAM_BOT_TOKEN
 ```
 
-## Как остановить
+7. Нажми `Deploy`.
+8. После деплоя скопируй URL вида:
 
-В окне PowerShell нажми `Ctrl+C`.
+```text
+https://fortunabot-worker.<your-subdomain>.workers.dev
+```
+
+9. Привяжи Telegram webhook, открыв в браузере:
+
+```text
+https://api.telegram.org/bot<YOUR_TOKEN>/setWebhook?url=https://fortunabot-worker.<your-subdomain>.workers.dev/webhook
+```
+
+10. Для проверки открой:
+
+```text
+https://api.telegram.org/bot<YOUR_TOKEN>/getWebhookInfo
+```
+
+## Что умеет бот
+
+- `/start` отправляет картинку и подпись `Privetstvuem!`
+- `/help`
+- `/ping`
+- повторяет любой текст
 
 ## Важно
 
-- ПК должен быть включен.
-- Интернет должен работать.
-- Окно со скриптом должно оставаться запущенным.
-- Если был настроен webhook, скрипт сам отключит его при запуске.
+- Если ты уже светил токен, сначала перевыпусти его через `@BotFather`.
+- После смены токена обнови secret в Cloudflare.
+- Если раньше бот работал через `getUpdates`, Cloudflare-версия использует `webhook`, это нормально.

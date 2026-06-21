@@ -17,7 +17,7 @@ export default {
       }
 
       const update = await request.json();
-      await handleUpdate(update, env);
+      await handleUpdate(update, env, url.origin);
       return jsonResponse({ ok: true });
     }
 
@@ -25,7 +25,7 @@ export default {
   },
 };
 
-async function handleUpdate(update, env) {
+async function handleUpdate(update, env, origin) {
   const message = update.message;
   if (!message || !message.chat || typeof message.chat.id === "undefined") {
     return;
@@ -35,10 +35,11 @@ async function handleUpdate(update, env) {
   const text = (message.text || "").trim();
 
   if (text === "/start") {
-    await sendMessage(
+    await sendPhoto(
       env,
       chatId,
-      "Privet! Ya zapushen v Cloudflare Workers.\n\nKomandy: /help, /ping"
+      `${origin}/welcome.jpg`,
+      "Приветствуем!"
     );
     return;
   }
@@ -66,24 +67,38 @@ async function handleUpdate(update, env) {
 }
 
 async function sendMessage(env, chatId, text) {
-  const response = await fetch(
-    `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-      }),
-    }
-  );
+  const response = await telegramFetch(env, "sendMessage", {
+    chat_id: chatId,
+    text,
+  });
 
   if (!response.ok) {
     const details = await response.text();
     throw new Error(`Telegram API error: ${response.status} ${details}`);
   }
+}
+
+async function sendPhoto(env, chatId, photoUrl, caption) {
+  const response = await telegramFetch(env, "sendPhoto", {
+    chat_id: chatId,
+    photo: photoUrl,
+    caption,
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Telegram API error: ${response.status} ${details}`);
+  }
+}
+
+function telegramFetch(env, method, payload) {
+  return fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/${method}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 }
 
 function jsonResponse(data, status = 200) {
